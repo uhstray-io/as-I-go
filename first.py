@@ -1,3 +1,13 @@
+################################################################################
+# Connect to a larger DREAM
+## Develop a game that will help everyone learn cognitive behavioral therapy, mindfulness, and software coding techniques that helps them achieve their dreams and goals.
+
+### Create a dream map
+
+### Export new code to VSCode or Choice Code Editor
+
+### Export Updated Dream Map
+
 # Set a goal
 ## Create a seed of thought
 class seed():
@@ -23,12 +33,3 @@ def  create_seed(self):
 ### Define the scope of your seed
 ### What is the purpose of your seed?
 ### Write the code that makes it
-
-# Connect to a larger idea
-## Develop a game that will help everyone learn cognitive behavioral therapy, mindfulness, and software coding techniques that helps them achieve their dreams and goals.
-
-### Create a dream map
-
-### Export new code to VSCode or Choice Code Editor
-
-### Export Updated Dream Map
