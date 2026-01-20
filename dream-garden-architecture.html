@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Garden - Architecture & Backlog</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --purple: #a371f7;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--green), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            color: var(--accent);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h3 {
+            color: var(--green);
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .diagram-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: rgba(88, 166, 255, 0.05);
+        }
+        
+        .priority-p0 { color: #f85149; font-weight: bold; }
+        .priority-p1 { color: var(--orange); font-weight: bold; }
+        .priority-p2 { color: var(--text-muted); }
+        
+        .points {
+            background: var(--purple);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .epic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .epic-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .tree {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .tech-item {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--green);
+        }
+        
+        .tech-item strong {
+            color: var(--accent);
+        }
+        
+        .mvp-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .mvp-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .mvp-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: bold;
+        }
+        
+        .nav {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            max-width: 200px;
+            font-size: 0.85rem;
+        }
+        
+        .nav a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.25rem 0;
+        }
+        
+        .nav a:hover {
+            color: var(--accent);
+        }
+        
+        @media (max-width: 1200px) {
+            .nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <strong style="color: var(--text)">Contents</strong>
+        <a href="#architecture">Architecture</a>
+        <a href="#domain">Domain Model</a>
+        <a href="#backlog">Backlog</a>
+        <a href="#tech">Tech Stack</a>
+        <a href="#structure">Directory</a>
+        <a href="#mvp">MVP Scope</a>
+    </nav>
+
+    <div class="container">
+        <h1>🌱 Dream Garden</h1>
+        <p class="subtitle">A gamified personal development platform for cultivating ideas into launched products</p>
+        
+        <div class="card">
+            <strong>Vision:</strong> Users plant "seeds" (ideas), nurture them through learning (CBT, mindfulness, business, coding), and harvest outcomes (launched products/services).
+        </div>
+
+        <h2 id="architecture">System Architecture</h2>
+        <div class="diagram-card">
+            <pre class="mermaid">
+flowchart TB
+    subgraph Clients["Client Layer"]
+        WEB[Web App<br/>React/HTMX]
+        CLI[CLI Tool<br/>Go]
+        MOBILE[Mobile App<br/>Future]
+    end
+
+    subgraph Gateway["API Gateway"]
+        GW[Gateway Service<br/>Go + Chi/Echo]
+        AUTH[Auth Middleware<br/>JWT/OAuth2]
+    end
+
+    subgraph Core["Core Services"]
+        direction TB
+        USER[User Service]
+        GARDEN[Garden Service<br/>Seeds/Plants/Growth]
+        LEARN[Learning Service<br/>CBT/Mindfulness/Biz/Code]
+        GAME[Gamification Engine<br/>XP/Achievements/Streaks]
+        TASK[Task & Action Service<br/>Watering Activities]
+    end
+
+    subgraph Integration["Integration Layer - Future"]
+        PLUG[Plugin Manager]
+        GODOT[Godot Adapter]
+        UNREAL[Unreal Adapter]
+        VSCODE[VSCode Extension]
+        GIT[Git/GitHub Adapter]
+    end
+
+    subgraph Data["Data Layer"]
+        PG[(PostgreSQL<br/>Primary Store)]
+        REDIS[(Redis<br/>Cache/Sessions)]
+        S3[(Object Storage<br/>Assets/Media)]
+    end
+
+    subgraph Events["Event Bus"]
+        NATS[NATS/Redis Streams<br/>Async Events]
+    end
+
+    Clients --> Gateway
+    GW --> AUTH
+    AUTH --> Core
+    
+    USER --> PG
+    GARDEN --> PG
+    LEARN --> PG
+    GAME --> REDIS
+    TASK --> PG
+    
+    Core <--> NATS
+    NATS --> Integration
+    
+    PLUG --> GODOT
+    PLUG --> UNREAL
+    PLUG --> VSCODE
+    PLUG --> GIT
+            </pre>
+        </div>
+
+        <h2 id="domain">Domain Model</h2>
+        <div class="diagram-card">
+            <pre class="mermaid">
+erDiagram
+    USER ||--o{ GARDEN : owns
+    USER ||--o{ ACHIEVEMENT : earns
+    USER ||--o{ LEARNING_PROGRESS : tracks
+    
+    GARDEN ||--o{ SEED : contains
+    SEED ||--o{ GROWTH_LOG : records
+    SEED ||--o{ TASK : requires
+    
+    LEARNING_MODULE ||--o{ LESSON : contains
+    LEARNING_MODULE ||--o{ LEARNING_PROGRESS : tracked_by
+    
+    TASK ||--o{ ACTION : completed_by
+    ACTION }o--|| GAMIFICATION_EVENT : triggers
+    
+    USER {
+        uuid id PK
+        string email
+        string display_name
+        int experience_points
+        int level
+        int current_streak
+        timestamp created_at
+    }
+    
+    GARDEN {
+        uuid id PK
+        uuid user_id FK
+        string name
+        string theme
+        timestamp created_at
+    }
+    
+    SEED {
+        uuid id PK
+        uuid garden_id FK
+        string title
+        text description
+        string stage
+        int health_score
+        jsonb metadata
+        timestamp planted_at
+    }
+    
+    GROWTH_LOG {
+        uuid id PK
+        uuid seed_id FK
+        string event_type
+        text notes
+        int xp_earned
+        timestamp logged_at
+    }
+    
+    TASK {
+        uuid id PK
+        uuid seed_id FK
+        string category
+        string title
+        text description
+        int xp_reward
+        boolean completed
+        timestamp due_date
+    }
+    
+    LEARNING_MODULE {
+        uuid id PK
+        string domain
+        string title
+        int difficulty_level
+        int estimated_minutes
+    }
+    
+    ACHIEVEMENT {
+        uuid id PK
+        uuid user_id FK
+        string badge_code
+        string title
+        timestamp earned_at
+    }
+            </pre>
+        </div>
+
+        <h2 id="backlog">Project Backlog</h2>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 1: Foundation & Core Infrastructure</h3>
+                <span class="epic-meta"><span class="priority-p0">P0</span> | Sprint 1-2</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>F-001</td><td>Project Setup</td><td>Initialize Go module, directory structure, Makefile, Docker Compose</td><td><span class="points">3</span></td></tr>
+                <tr><td>F-002</td><td>Configuration Management</td><td>Implement config loading (env, YAML) with Viper</td><td><span class="points">2</span></td></tr>
+                <tr><td>F-003</td><td>Database Setup</td><td>PostgreSQL schema migrations with golang-migrate</td><td><span class="points">3</span></td></tr>
+                <tr><td>F-004</td><td>Logging & Observability</td><td>Structured logging (slog), OpenTelemetry tracing</td><td><span class="points">3</span></td></tr>
+                <tr><td>F-005</td><td>HTTP Server Framework</td><td>Set up Chi or Echo router with middleware chain</td><td><span class="points">2</span></td></tr>
+                <tr><td>F-006</td><td>Error Handling</td><td>Implement consistent error types and API error responses</td><td><span class="points">2</span></td></tr>
+                <tr><td>F-007</td><td>Testing Framework</td><td>Set up testify, testcontainers for integration tests</td><td><span class="points">3</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 2: Authentication & User Management</h3>
+                <span class="epic-meta"><span class="priority-p0">P0</span> | Sprint 2-3</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>U-001</td><td>User Registration</td><td>Email/password registration with validation</td><td><span class="points">3</span></td></tr>
+                <tr><td>U-002</td><td>User Login</td><td>JWT-based authentication flow</td><td><span class="points">3</span></td></tr>
+                <tr><td>U-003</td><td>OAuth2 Integration</td><td>Google/GitHub social login</td><td><span class="points">5</span></td></tr>
+                <tr><td>U-004</td><td>User Profile</td><td>CRUD operations for user profile data</td><td><span class="points">2</span></td></tr>
+                <tr><td>U-005</td><td>Session Management</td><td>Redis-backed session store with refresh tokens</td><td><span class="points">3</span></td></tr>
+                <tr><td>U-006</td><td>Password Reset</td><td>Email-based password reset flow</td><td><span class="points">3</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 3: Garden & Seed Management (Core Domain)</h3>
+                <span class="epic-meta"><span class="priority-p0">P0</span> | Sprint 3-5</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>G-001</td><td>Create Garden</td><td>User creates their personal garden space</td><td><span class="points">2</span></td></tr>
+                <tr><td>G-002</td><td>Plant Seed</td><td>Create a new idea/goal with initial metadata</td><td><span class="points">3</span></td></tr>
+                <tr><td>G-003</td><td>Seed Stages</td><td>Implement stage progression (seed→sprout→growing→flowering→harvest)</td><td><span class="points">5</span></td></tr>
+                <tr><td>G-004</td><td>Growth Logging</td><td>Record activities that "water" the seed</td><td><span class="points">3</span></td></tr>
+                <tr><td>G-005</td><td>Health Score</td><td>Calculate seed health based on attention/neglect</td><td><span class="points">5</span></td></tr>
+                <tr><td>G-006</td><td>Garden Dashboard</td><td>API for garden overview with all seeds and stats</td><td><span class="points">3</span></td></tr>
+                <tr><td>G-007</td><td>Seed Templates</td><td>Pre-built seed types (SaaS, game, open-source project)</td><td><span class="points">3</span></td></tr>
+                <tr><td>G-008</td><td>Milestone Tracking</td><td>Define and track key milestones for each seed</td><td><span class="points">5</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 4: Task & Action System ("Watering")</h3>
+                <span class="epic-meta"><span class="priority-p0">P0</span> | Sprint 4-6</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>T-001</td><td>Task Generation</td><td>Generate suggested tasks based on seed stage</td><td><span class="points">5</span></td></tr>
+                <tr><td>T-002</td><td>Task Categories</td><td>Categorize tasks by domain (CBT, mindfulness, business, coding)</td><td><span class="points">2</span></td></tr>
+                <tr><td>T-003</td><td>Task Completion</td><td>Mark tasks complete and trigger XP rewards</td><td><span class="points">3</span></td></tr>
+                <tr><td>T-004</td><td>Daily Actions</td><td>Quick daily check-in actions for maintaining streaks</td><td><span class="points">3</span></td></tr>
+                <tr><td>T-005</td><td>Custom Tasks</td><td>User-defined tasks linked to their seeds</td><td><span class="points">2</span></td></tr>
+                <tr><td>T-006</td><td>Task Scheduling</td><td>Reminder system for upcoming/overdue tasks</td><td><span class="points">5</span></td></tr>
+                <tr><td>T-007</td><td>Batch Watering</td><td>Complete multiple small actions in one session</td><td><span class="points">3</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 5: Learning Module System</h3>
+                <span class="epic-meta"><span class="priority-p1">P1</span> | Sprint 5-8</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>L-001</td><td>Module Framework</td><td>Generic learning module structure</td><td><span class="points">5</span></td></tr>
+                <tr><td>L-002</td><td>CBT Module</td><td>Cognitive restructuring exercises, thought records</td><td><span class="points">8</span></td></tr>
+                <tr><td>L-003</td><td>Mindfulness Module</td><td>Guided exercises, breathing techniques, meditation timers</td><td><span class="points">8</span></td></tr>
+                <tr><td>L-004</td><td>Business Module</td><td>Lean canvas, market research templates, pitch practice</td><td><span class="points">8</span></td></tr>
+                <tr><td>L-005</td><td>Coding Module</td><td>Programming challenges, architecture patterns</td><td><span class="points">8</span></td></tr>
+                <tr><td>L-006</td><td>Progress Tracking</td><td>Track completion, scores, time spent per module</td><td><span class="points">3</span></td></tr>
+                <tr><td>L-007</td><td>Adaptive Learning</td><td>Suggest modules based on seed type and user progress</td><td><span class="points">5</span></td></tr>
+                <tr><td>L-008</td><td>Content Management</td><td>Admin API for managing learning content</td><td><span class="points">5</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 6: Gamification Engine</h3>
+                <span class="epic-meta"><span class="priority-p1">P1</span> | Sprint 6-8</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>X-001</td><td>XP System</td><td>Experience points calculation and storage</td><td><span class="points">3</span></td></tr>
+                <tr><td>X-002</td><td>Level Progression</td><td>Level thresholds and level-up events</td><td><span class="points">3</span></td></tr>
+                <tr><td>X-003</td><td>Achievement System</td><td>Badge definitions and unlock logic</td><td><span class="points">5</span></td></tr>
+                <tr><td>X-004</td><td>Streak Tracking</td><td>Daily streak calculation with grace periods</td><td><span class="points">3</span></td></tr>
+                <tr><td>X-005</td><td>Leaderboards</td><td>Optional community leaderboards</td><td><span class="points">5</span></td></tr>
+                <tr><td>X-006</td><td>Rewards Catalog</td><td>Virtual rewards unlocked by achievements</td><td><span class="points">3</span></td></tr>
+                <tr><td>X-007</td><td>Event Processing</td><td>Async event handler for gamification triggers</td><td><span class="points">5</span></td></tr>
+                <tr><td>X-008</td><td>Notifications</td><td>Push/email notifications for achievements, streaks</td><td><span class="points">5</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 7: API & Client Support</h3>
+                <span class="epic-meta"><span class="priority-p1">P1</span> | Sprint 7-9</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>A-001</td><td>REST API Docs</td><td>OpenAPI/Swagger spec generation</td><td><span class="points">3</span></td></tr>
+                <tr><td>A-002</td><td>Rate Limiting</td><td>Per-user rate limiting with Redis</td><td><span class="points">3</span></td></tr>
+                <tr><td>A-003</td><td>Pagination</td><td>Cursor-based pagination for list endpoints</td><td><span class="points">2</span></td></tr>
+                <tr><td>A-004</td><td>Webhook System</td><td>Outbound webhooks for external integrations</td><td><span class="points">5</span></td></tr>
+                <tr><td>A-005</td><td>CLI Client</td><td>Go CLI tool for power users</td><td><span class="points">8</span></td></tr>
+                <tr><td>A-006</td><td>GraphQL Layer</td><td>Optional GraphQL API alongside REST</td><td><span class="points">8</span></td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="epic-header">
+                <h3>Epic 8: Integration Framework (Future)</h3>
+                <span class="epic-meta"><span class="priority-p2">P2</span> | Sprint 10+</span>
+            </div>
+            <table>
+                <tr><th>ID</th><th>Story</th><th>Description</th><th>Points</th></tr>
+                <tr><td>I-001</td><td>Plugin Architecture</td><td>Define plugin interface and lifecycle</td><td><span class="points">8</span></td></tr>
+                <tr><td>I-002</td><td>VSCode Extension</td><td>Track coding activity, sync tasks</td><td><span class="points">13</span></td></tr>
+                <tr><td>I-003</td><td>Git Integration</td><td>Track commits, PRs as "watering" actions</td><td><span class="points">8</span></td></tr>
+                <tr><td>I-004</td><td>Godot Plugin</td><td>Game development progress tracking</td><td><span class="points">13</span></td></tr>
+                <tr><td>I-005</td><td>Unreal Plugin</td><td>Unreal Engine project integration</td><td><span class="points">13</span></td></tr>
+                <tr><td>I-006</td><td>Calendar Sync</td><td>Google/Outlook calendar integration</td><td><span class="points">5</span></td></tr>
+                <tr><td>I-007</td><td>Notion/Obsidian</td><td>Knowledge base sync</td><td><span class="points">8</span></td></tr>
+            </table>
+        </div>
+
+        <h2 id="tech">Technical Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <strong>Language & Framework</strong><br>
+                Go 1.22+ with Chi/Echo router, sqlc for type-safe SQL
+            </div>
+            <div class="tech-item">
+                <strong>Primary Database</strong><br>
+                PostgreSQL 16 with JSONB for flexible metadata
+            </div>
+            <div class="tech-item">
+                <strong>Caching & Sessions</strong><br>
+                Redis 7 for sessions, rate limiting, leaderboards
+            </div>
+            <div class="tech-item">
+                <strong>Authentication</strong><br>
+                JWT with refresh tokens, OAuth2, Argon2id hashing
+            </div>
+            <div class="tech-item">
+                <strong>Observability</strong><br>
+                slog (structured logging), OpenTelemetry, Prometheus
+            </div>
+            <div class="tech-item">
+                <strong>Testing</strong><br>
+                testify assertions, testcontainers-go for integration
+            </div>
+        </div>
+
+        <h2 id="structure">Directory Structure</h2>
+        <div class="card">
+            <pre class="tree">dream-garden/
+├── cmd/
+│   ├── server/          # Main API server
+│   │   └── main.go
+│   └── cli/             # CLI client
+│       └── main.go
+├── internal/
+│   ├── config/          # Configuration loading
+│   ├── server/          # HTTP server setup
+│   ├── middleware/      # Auth, logging, rate limiting
+│   ├── domain/          # Core business logic
+│   │   ├── user/
+│   │   ├── garden/
+│   │   ├── seed/
+│   │   ├── task/
+│   │   ├── learning/
+│   │   └── gamification/
+│   ├── repository/      # Data access layer
+│   │   ├── postgres/
+│   │   └── redis/
+│   ├── service/         # Application services
+│   └── event/           # Event bus and handlers
+├── pkg/                 # Public packages
+│   ├── api/             # API types and client
+│   └── plugin/          # Plugin interface definitions
+├── migrations/          # SQL migrations
+├── api/                 # OpenAPI specs
+├── web/                 # Embedded web assets
+├── scripts/             # Build scripts
+├── docker-compose.yml
+├── Makefile
+└── go.mod</pre>
+        </div>
+
+        <h2 id="mvp">MVP Scope (Phase 1)</h2>
+        <div class="card">
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Focus on core loop before expanding:</p>
+            <ul class="mvp-list">
+                <li>User registration/login with JWT</li>
+                <li>Create garden and plant seeds</li>
+                <li>Basic task system with manual completion</li>
+                <li>XP and streak tracking</li>
+                <li>Simple CBT thought record exercise</li>
+                <li>Basic mindfulness timer</li>
+                <li>REST API with simple web client</li>
+            </ul>
+            <p style="margin-top: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 4px;">
+                <strong style="color: var(--green);">Estimated Timeline:</strong> 8-10 weeks for solo developer
+            </p>
+        </div>
+
+        <h2>Next Steps</h2>
+        <div class="card">
+            <ol style="padding-left: 1.5rem;">
+                <li style="margin: 0.5rem 0;">Set up repository with Go module and basic structure</li>
+                <li style="margin: 0.5rem 0;">Implement F-001 through F-007 (foundation)</li>
+                <li style="margin: 0.5rem 0;">Build user auth (U-001 through U-003)</li>
+                <li style="margin: 0.5rem 0;">Core garden/seed domain (G-001 through G-004)</li>
+                <li style="margin: 0.5rem 0;">Add gamification to make it sticky</li>
+                <li style="margin: 0.5rem 0;">Iterate on learning modules based on user feedback</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { 
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
